@@ -1,0 +1,17 @@
+h1 {
+    color: white;
+    padding: 10px;
+}
+
+#currentCity{
+    border: solid;
+    border-width: 5px;
+    border-color: black;
+    padding: 5px;
+    margin: 5px;
+}
+
+#forecast {
+    padding: 5px;
+    margin: 5px;
+}
