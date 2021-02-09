@@ -16,9 +16,8 @@ $(document).ready(function () {
             $(".hide").attr("class", "row")
             console.log(results)
             var currentCityName = results.name;
-            $("#currentCityName").text(currentCityName + " ");
-            var currentWethIcon = results.weather[0].icon
-            console.log(currentWethIcon)
+            $("#currentCityInfo").text(currentCityName + " ");
+
             addToSearchHist(currentCityName)
             dispalySearchHist()
             console.log("the current city is: " + currentCityName)
@@ -27,9 +26,13 @@ $(document).ready(function () {
             console.log(results.coord.lat)
             var currentCityLat = results.coord.lat
             findWithCoords(currentCityLat, currentCityLon, apiKey)
-            var currentCityDt = results.dt
+            var currentCityDt = results.sys.sunrise
             dateConverter(currentCityDt)
             console.log(currentCityDt)
+            var currentWethIcon = results.weather[0].icon
+            console.log(currentWethIcon)
+            weatherIcon(currentWethIcon);
+
         });
 
     });
@@ -54,7 +57,7 @@ $(document).ready(function () {
             var currentCityWinSpeed = results.current.wind_speed;
             $("#currentWind").text("Wind Speed: " + currentCityWinSpeed + " MPH")
             var currentCityUvi = results.current.uvi;
-            $("#currentUvi").text("UV Index: " + currentCityUvi)
+            uviIndexSeverity(currentCityUvi)
 
         })
     }
@@ -67,7 +70,35 @@ $(document).ready(function () {
         var currentIntMonth = inDateFormat.getMonth() + 1
         var currentIntDay = inDateFormat.getDate()
         var currentIntYear = inDateFormat.getFullYear()
-        $("#currentCityName").append("<span>" + "(" + currentIntMonth + "/" + currentIntDay + "/" + currentIntYear + ")" + "</span>")
+        $("#currentCityInfo").append("<span>" + "(" + currentIntMonth + "/" + currentIntDay + "/" + currentIntYear + ")" + "</span>")
+    }
+
+    function weatherIcon(currentWethIcon) {
+        var currentWethImg = "assets/images/" + currentWethIcon + "@2x.png"
+        var currentWethIconImg = $("<img>")
+        currentWethIconImg.attr("src", currentWethImg)
+        $("#currentCityInfo").append(currentWethIconImg)
+    }
+
+    function uviIndexSeverity(currentCityUvi) {
+        var uviIndexText = $("<span>")
+        uviIndexText.text("UV Index: ")
+        $("#currentUvi").append(uviIndexText)
+        var currentCityUviHolder = $("<span>")
+        if (currentCityUvi >= 0 && currentCityUvi <= 2) {
+            currentCityUviHolder.attr("class", "low-uvi")
+        } else if (currentCityUvi >= 3 && currentCityUvi <= 5) {
+            currentCityUviHolder.attr("class", "moderate-uvi")
+        } else if (currentCityUvi >= 6 && currentCityUvi <= 7) {
+            currentCityUviHolder.attr("class", "high-uvi")
+        } else if (currentCityUvi >= 8 && currentCityUvi <= 10) {
+            currentCityUviHolder.attr("class", "very-high-uvi")
+        } else if (currentCityUvi >= 11) {
+            currentCityUviHolder.attr("class", "extreme-uvi")
+        }
+        currentCityUviHolder.text(currentCityUvi)
+        $("#currentUvi").append(currentCityUviHolder)
+
     }
 
     function initLocalStorage() {
