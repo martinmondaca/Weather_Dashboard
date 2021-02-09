@@ -23,3 +23,33 @@ h1 {
 .btn-info{
     margin: 2.5px;
 }
+
+.low-uvi {
+    background-color: green;
+    padding: 4px;
+    border-radius: 25%;
+}
+
+.moderate-uvi {
+    background-color: yellow;
+    padding: 4px;
+    border-radius: 25%;
+}
+
+.high-uvi {
+    background-color: orange;
+    padding: 4px;
+    border-radius: 25%;
+}
+
+.very-high-uvi {
+    background-color: red;
+    padding: 4px;
+    border-radius: 25%;
+}
+
+.extreme-uvi {
+    background-color: purple;
+    padding: 4px;
+    border-radius: 25%;
+}
