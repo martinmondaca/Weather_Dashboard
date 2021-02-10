@@ -53,3 +53,7 @@ h1 {
     padding: 4px;
     border-radius: 25%;
 }
+
+.forecast-square {
+    border: 5px solid black;
+}
