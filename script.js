@@ -116,8 +116,8 @@ $(document).ready(function () {
 
     function fiveDayForecast(results) {
         $("#forecast").text("")
-        var forecastHeader = $("<h3>")
-        forecastHeader.text("5-Day Forecast")
+        var forecastHeader = $("<h4>")
+        forecastHeader.text("5-Day Forecast:")
         $("#forecast").append(forecastHeader)
         for (i = 1; i < 6; i++) {
             var forecastSquare = $("<div>")
