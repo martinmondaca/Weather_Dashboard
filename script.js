@@ -1,14 +1,40 @@
 $(document).ready(function () {
     var searchBtn = $("#searchBtn");
-    if (localStorage.getItem("prevCityWeatherSrch") != null || localStorage.getItem("prevCityWeatherSrch") != "[]") {
+    // var previousSearch = $(".prvCity")
+    initLocalStorage();
+    // var prevCityBtn = $(".prvCity")
+
+    if ((localStorage.getItem("prevCityWeatherSrch") != "[]")) {
         var currentSrchHist = JSON.parse(localStorage.getItem("prevCityWeatherSrch"))
         renderLastCity(currentSrchHist[0]);
     }
-    initLocalStorage();
     dispalySearchHist();
     //get city coordinates
-    searchBtn.on("click", function (event) {
-        event.preventDefault()
+    $(document).on("click", ".prvCity", function (e) {
+        e.preventDefault()
+        var cityName;
+        cityName = $(this).attr("id")
+        var apiKey = "6406ca836e96fe35d13d0645f945ad0b"
+        var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&cnt=5&units=imperial&appid=" + apiKey;
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(function (results) {
+            $(".hide").attr("class", "row")
+            var currentCityName = results.name;
+            $("#currentCityInfo").text(currentCityName + " ");
+            var currentCityLon = results.coord.lon
+            var currentCityLat = results.coord.lat
+            findWithCoords(currentCityLat, currentCityLon)
+            var currentCityDt = results.sys.sunrise
+            dateConverter(currentCityDt)
+            var currentWethIcon = results.weather[0].icon
+            weatherIcon(currentWethIcon);
+        })
+    })
+
+    searchBtn.on("click", function (e) {
+        e.preventDefault()
         var cityName = $("#userInput").val();
         var apiKey = "6406ca836e96fe35d13d0645f945ad0b"
         var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&cnt=5&units=imperial&appid=" + apiKey;
@@ -16,28 +42,18 @@ $(document).ready(function () {
             url: queryURL,
             method: "GET"
         }).then(function (results) {
-            console.log(results)
             $(".hide").attr("class", "row")
-            console.log(results)
             var currentCityName = results.name;
             $("#currentCityInfo").text(currentCityName + " ");
-
             addToSearchHist(currentCityName)
-            dispalySearchHist()
-            console.log("the current city is: " + currentCityName)
-            console.log(results.coord.lon)
             var currentCityLon = results.coord.lon
-            console.log(results.coord.lat)
             var currentCityLat = results.coord.lat
             findWithCoords(currentCityLat, currentCityLon)
             var currentCityDt = results.sys.sunrise
             dateConverter(currentCityDt)
-            console.log(currentCityDt)
             var currentWethIcon = results.weather[0].icon
-            console.log(currentWethIcon)
             weatherIcon(currentWethIcon);
         })
-
     });
 
     function findWithCoords(currentCityCoLat, currentCityCoLon) {
@@ -47,7 +63,6 @@ $(document).ready(function () {
             url: queryURL2,
             method: "GET"
         }).then(function (results) {
-            console.log(results)
             var currentCityTemp = results.current.temp;
             $("#currentTemp").text("Temperature: " + currentCityTemp + " \u00B0F")
             var currentCityHum = results.current.humidity;
@@ -57,7 +72,6 @@ $(document).ready(function () {
             var currentCityUvi = results.current.uvi;
             uviIndexSeverity(currentCityUvi)
             fiveDayForecast(results);
-
         })
     }
 
@@ -65,7 +79,6 @@ $(document).ready(function () {
     function dateConverter(dt) {
         var inMilliseconds = dt * 1000;
         var inDateFormat = new Date(inMilliseconds);
-        console.log(inDateFormat)
         var currentIntMonth = inDateFormat.getMonth() + 1
         var currentIntDay = inDateFormat.getDate()
         var currentIntYear = inDateFormat.getFullYear()
@@ -134,8 +147,6 @@ $(document).ready(function () {
             forecastSquare.append(forecastDateP, forecastWethIcon, forecastTempP, forecastHumP)
             $("#forecast").append(forecastSquare)
         }
-
-
     }
 
     function initLocalStorage() {
@@ -156,7 +167,6 @@ $(document).ready(function () {
             url: queryURL3,
             method: "GET"
         }).then(function (results) {
-            console.log(results)
             $(".hide").attr("class", "row")
             var currentCityName = results.name;
             $("#currentCityInfo").text(currentCityName + " ");
@@ -165,38 +175,33 @@ $(document).ready(function () {
             findWithCoords(currentCityLat, currentCityLon)
             var currentCityDt = results.sys.sunrise
             dateConverter(currentCityDt)
-            console.log(currentCityDt)
             var currentWethIcon = results.weather[0].icon
-            console.log(currentWethIcon)
             weatherIcon(currentWethIcon);
         })
     }
 
     function addToSearchHist(newCityName) {
         initLocalStorage();
-
         var currentSrchHist = JSON.parse(localStorage.getItem("prevCityWeatherSrch"))
-        console.log(typeof currentSrchHist)
         currentSrchHist.unshift(newCityName)
         localStorage.setItem("prevCityWeatherSrch", JSON.stringify(currentSrchHist))
+        dispalySearchHist()
     }
 
     function dispalySearchHist() {
         $("#searchHistory").text("")
         var currentSrchHist = JSON.parse(localStorage.getItem("prevCityWeatherSrch"))
         for (i = 0; i < currentSrchHist.length; i++) {
-            console.log(currentSrchHist[i])
             $("#searchHistory").append("<br>")
             var citySrchBtn = $("<button>")
             citySrchBtn.addClass("btn btn-info prvCity")
             citySrchBtn.attr("type", "button")
-            citySrchBtn.attr("city-name", currentSrchHist[i])
+            citySrchBtn.attr("id", currentSrchHist[i])
             citySrchBtn.text(currentSrchHist[i])
             $("#searchHistory").append(citySrchBtn)
             if ([i] > 5) {
                 return
             }
-
         }
     }
 
