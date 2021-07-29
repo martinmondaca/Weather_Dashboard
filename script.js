@@ -36,6 +36,7 @@ $(document).ready(function () {
             weatherForecast(results);
             addToSearchHist(results.name);
         });
+        $("#userInput").val("")
     });
 
     function weatherForecast(results) {
